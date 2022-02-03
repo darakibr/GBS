@@ -14,12 +14,14 @@
 </ol>
 
 ## template_treepipe.sh
-Will take a selection of isolates fastq files, uses a REFERENCE file and an EXCLUSION file, and create:\n
-DEPENDENT on template_bacdate.R and template_hierbaps.R\n
-\t VCF Type files against a reference genome to call SNPs\n
-\t SNP log file with all positions marked\n
-\t Pseudo genomes from SNP and complete REFERENCE genome\n
-\t Hierbaps grouping using SNP (overly simplistically: grouping by distance)\n
-\t Phylogenetic tree file using RAxML\n
-\t Clonal Frame ML from RAxML tree\n
-\t Bacdating from CFML output\n
+<ol>
+  <li>Will take a selection of isolates fastq files, uses a REFERENCE file and an EXCLUSION file, and create: <ul>
+      <li>VCF Type files against a reference genome to call SNPs</li>
+      <li>SNP log file with all positions marked</li>
+      <li>Pseudo genomes from SNP and complete REFERENCE genome</li>
+      <li>Hierbaps grouping using SNP (overly simplistically: grouping by distance)</li>
+      <li>Phylogenetic tree file using RAxML</li>
+      <li>Clonal Frame ML from RAxML tree</li>
+      <li>Bacdating from CFML output</li>
+    </ul>DEPENDENT on template_bacdate.R and template_hierbaps.R</li>
+</ol>
