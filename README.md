@@ -4,12 +4,14 @@
 ### Template files can be changed to run gene analysis on new datasets
 
 ## template_denovopipe.sh
-Will take fastq.gz (gzip compressed) files and create:\n
-\t Multi Locus Sequence Type files\n
-\t Capsular Serotype\n
-\t Antimicrobial resistance gene detection\n
-\t Corrected fastq files (gzip compressed)\n
-\t de-novo .fasta files\n
+<ol>
+  <li>Will take fastq.gz (gzip compressed) files and create:<ul>
+      <li>Multi Locus Sequence Type files Capsular Serotype</li>
+      <li>Antimicrobial resistance gene detection</li>
+      <li>Corrected fastq files (gzip compressed)</li>
+      <li>de-novo .fasta files</li>
+    </ul></li>
+</ol>
 
 ## template_treepipe.sh
 Will take a selection of isolates fastq files, uses a REFERENCE file and an EXCLUSION file, and create:\n
