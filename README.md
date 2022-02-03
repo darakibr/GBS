@@ -1,5 +1,4 @@
-# Test1 python code
-## Tutorial Guide
+# GBS data analysis codes
+## Python and Bash scripts to run data analysis on Gene data
 Testing out some different things
 
-import seaborn
