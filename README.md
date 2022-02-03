@@ -23,5 +23,5 @@
       <li>Phylogenetic tree file using RAxML</li>
       <li>Clonal Frame ML from RAxML tree</li>
       <li>Bacdating from CFML output</li>
-    </ul>DEPENDENT on template_bacdate.R and template_hierbaps.R</li>
+    </ul>*DEPENDENT on template_bacdate.R and template_hierbaps.R</li>
 </ol>
