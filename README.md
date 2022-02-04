@@ -42,3 +42,7 @@
       <li>Bacdating from CFML output</li>
     </ul>*DEPENDENT on template_bacdate.R and template_hierbaps.R</li>
 </ol>
+
+## CCisolatetotxt.py
+<p> This was used to create several text files to anotate trees in iTOL (phylogenetic tree visiualization website), and create some graphs using seaborn and matplotlib for internal use. This has not been cleaned to and changed to a template format yet, but I am working on it.
+</p>
