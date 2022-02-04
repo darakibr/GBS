@@ -18,6 +18,7 @@
 
 
 ### Template files can be changed to run gene analysis on new datasets
+### Templates based on .R script will be changed by the template_treepipe.sh script
 
 ## template_denovopipe.sh
 <ol>
