@@ -1,5 +1,21 @@
 # GBS data analysis codes
 ## Python and Bash scripts to run data analysis on Gene data
+<p> These are some of the scripts I have written to perform data analysis on our Group B Streptococcus agalactiae. I am currently adapting these to be usable for any further bacterial gene analysis our lab might require.
+</p>
+<ol>
+  <li>These scripts use several known genetic tools, including:<ul>
+      <li>Strainseeker (similar genetic match)</li>
+      <li>SPAdes (contig assembly)</li>
+      <li>Rapberry (read quality)</li>
+      <li>SRST2 (MLST and Capsular Serotype calling)</li>
+      <li>RGI (AMR calling)</li>
+      <li>RAxML (Phylogenetic tree building)</li>
+      <li>Hierbaps (Statistical Grouping of samples by SNP differences)</li>
+      <li>CFML (Phylogenetic tree building)</li>
+      <li>Bacdating (Historical phylogenetic inference)</li>
+    </ul></li>
+</ol>
+
 
 ### Template files can be changed to run gene analysis on new datasets
 
