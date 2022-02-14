@@ -106,6 +106,7 @@ done
 ### Run bacdate R scrip from template_bacdate.R file ###
 	cp ../template_bacdate.R ./"$folder"_bacdate.R &&
 	sed -i "s/FOLDER/$folder/g" "$folder"_bacdate.R &&
+  ### REQUIRES THAT A "$folder"-dates.csv FILES EXISTS CONSISTING OF COLUMNS 'Isolate' or 'Sample' w/ identifier values and 'd' w/ year values
 	echo " *** Bacdating is running ..." &&
 	R CMD BATCH "$folder"_bacdate.R &&
 	echo " *** output with Model comparison can be found at the end of $folder_hierbaps.Rout file" &&
