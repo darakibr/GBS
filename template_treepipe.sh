@@ -15,7 +15,7 @@ cp ../exclusion"$REFERENCE".txt ./"$folder"exclude.txt &&
 
  # >>> enter strain or accession numbers in place of ISOLATES <<< #
 for X in ISOLATES ; do
-	if [ ! -f /home/user/Documents/GBS_typeIV/vcf-filtered/"$X"_dp15q10f75-decomp.vcf
+	if [ ! -f /home/user/Documents/GBS_typeIV/vcf-filtered/"$X"_dp15q10f75-decomp.vcf ]
 	then
 		cp /home/user/Documents/GBS_typeIV/corr/"$X"_R1-corr.fastq.gz . &&
 		cp /home/user/Documents/GBS_typeIV/corr/"$X"_R2-corr.fastq.gz . &&
@@ -46,7 +46,7 @@ for X in ISOLATES ; do
 		cp /home/user/Documents/GBS_typeIV/vcf-filtered/"$X"_dp15q10f75-decomp.vcf .
 	fi
 		### Make snpswap files ###
-	if [ ! -f /home/user/Documents/GBS_typeIV/snpswap/"$X"-swap.fasta.gz
+	if [ ! -f /home/user/Documents/GBS_typeIV/snpswap/"$X"-swap.fa.gz ]
 	then
 		prephix.py -batchid "$X" "$X"_dp15q10f75-decomp.vcf &&
 		snp_swapper.pl "$REFERENCE".fa "$X".snp &&
@@ -57,7 +57,7 @@ for X in ISOLATES ; do
 		rm "$X".ref &&
 		rm "$X".snp
 	else
-		cp /home/user/Documents/GBS_typeIV/snpswap/"$X"-swap.fasta.gz ./"$X"-swap.fa.gz &&
+		cp /home/user/Documents/GBS_typeIV/snpswap/"$X"-swap.fa.gz ./"$X"-swap.fa.gz &&
 		gunzip "$X"-swap.fa.gz &&
 		mv "$X"-swap.fa ./snpswap/
 	fi
