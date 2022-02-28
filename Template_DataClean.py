@@ -30,7 +30,7 @@ def search_column(df,searchcol, val, new_col = True, newname=0):
       
 def total(data, add_percent = True):
   temp = data.transpose()
-  data['Total'] = data.count()
+  data['Total'] = temp.count()
   if add_percent == True:
     n = len(data)-23 ### There are 23 descriptive rows before individual isolates are listed, other vcf files may vary. ###
     data['Percent'] = data['Total']/n*100
