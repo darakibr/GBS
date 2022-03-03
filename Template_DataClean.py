@@ -36,3 +36,25 @@ def total(data, add_percent = True):
     data['Percent'] = data['Total']/n*100
   return data.transpose()
 
+def rfcaller(data, features=list(), outcome=str(), n_estimators= 500, perc_test = 0.8, accuracy= True, show_features=10):
+  x = data[features]
+  y = data[[outcome]]
+  xtrain, xtest, ytrain, ytest = train_test_split(x,y,test_size= perc_test)
+  rfc = RandomForestClassifier(n_estimators = n_estimators)
+  rfc.fit(xtrain,ytrain)
+  if accuracy == True:
+    pred = rfc.predict(xtest)
+    print("Accuracy:", metrics.accuracy_score(ytest,pred))
+  if show_features >0:
+    features = pd.Series(rfc.feature_importances_, index=features).sort_values(ascending=False)
+    print(features[0:show_features])
+  print("Random Forest Model done as rfc.")
+
+def hotencoder(col,data):
+  from sklearn.preprocessing import OneHotEncoder
+  encoder = OneHotEncoder()
+  enc = encoder.fit_transform(data[[col]])
+  catlist = encoder.get_feature_names_out()
+  print("Categories encoded:", catlist)
+  df= pd.DataFrame(enc.toarray(), columns=catlist)
+  return df
