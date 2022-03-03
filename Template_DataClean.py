@@ -21,13 +21,18 @@ percent.to_csv(' <path_to_METAwTotals.csv> ' )
 ### Keep data like this for working with single dataframe
 
 df = pd.read_csv( '<path_to_file>' , sep='\t', index_col=0, header=0)
-def search_column(df,searchcol, val, new_col = True, newname=0):
+
+def search_column(data,searchcol, val, new_col = True, newname=0):
   if new_col == True:
     if newname ==0:
       newname = input('New Column Name: ')
-    list = df[searchcol]
-    df[newname] = [1 if val in row else np.nan for row in list] # iterates over rows adding a 1 if val found, otherwise adding NaN
-      
+    list = data[searchcol]
+    data[newname] = [1 if val in row else np.nan for row in list] # iterates over rows adding a 1 if val found, otherwise adding NaN
+    return data
+  else:
+    df = [1 if val in row else np.nan for row in list]
+    return df
+
 def total(data, add_percent = True):
   temp = data.transpose()
   data['Total'] = temp.count()
@@ -37,14 +42,17 @@ def total(data, add_percent = True):
   return data.transpose()
 
 def rfcaller(data, features=list(), outcome=str(), n_estimators= 500, perc_test = 0.8, accuracy= True, show_features=10):
+  from sklearn.ensemble import RandomForestClassifier
+  from sklearn.model_selection import train_test_split
   x = data[features]
   y = data[[outcome]]
   xtrain, xtest, ytrain, ytest = train_test_split(x,y,test_size= perc_test)
   rfc = RandomForestClassifier(n_estimators = n_estimators)
   rfc.fit(xtrain,ytrain)
   if accuracy == True:
+    from sklearn.metrics import accuracy_score
     pred = rfc.predict(xtest)
-    print("Accuracy:", metrics.accuracy_score(ytest,pred))
+    print("Accuracy:", accuracy_score(ytest,pred))
   if show_features >0:
     features = pd.Series(rfc.feature_importances_, index=features).sort_values(ascending=False)
     print(features[0:show_features])
