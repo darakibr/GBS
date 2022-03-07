@@ -66,3 +66,15 @@ def hotencoder(col,data):
   print("Categories encoded:", catlist)
   df= pd.DataFrame(enc.toarray(), columns=catlist)
   return df
+
+def addgenecountcol(df, gene):
+  if gene not in df.transpose().GeneName.unique():
+    print("Gene "+gene+" not found in dataframe.")
+    print("Genes found in this dataframe are:", list(df.transpose().GeneName.unique()))
+  else:
+    counts = df.transpose().groupby('GeneName').count().transpose()
+    n = list(df.index).index('GeneName') # get index location of GeneName column in original dataframe
+    genelist = list(counts[gene])
+    genelist.insert(n,gene)
+    return df[gene+"total"] = genelist
+
