@@ -78,3 +78,7 @@ def addgenecountcol(df, gene):
     genelist.insert(n,gene)
     return df[gene+"total"] = genelist
 
+# To get which columns correspond to stop mutations as labelled by snpEff
+snpcol = [col for col in df.columns if 'p.' in col]
+stopcol = [val for val in snpcol if 'fs' in val].extend([val for val in snpcol if '*' in val])
+stopcoldf = df[stopcol] # USE this to get counts for mutations that disrupt the protein formation by gene in question.
