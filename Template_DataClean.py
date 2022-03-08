@@ -22,24 +22,22 @@ percent.to_csv(' <path_to_METAwTotals.csv> ' )
 
 df = pd.read_csv( '<path_to_file>' , sep='\t', index_col=0, header=0)
 
-def search_column(data,searchcol, val, new_col = True, newname=0):
-  if new_col == True:
-    if newname ==0:
-      newname = input('New Column Name: ')
-    list = data[searchcol]
-    data[newname] = [1 if val in row else np.nan for row in list] # iterates over rows adding a 1 if val found, otherwise adding NaN
-    return data
-  else:
-    df = [1 if val in row else np.nan for row in list]
-    return df
-
-def total(data, add_percent = True):
-  temp = data.transpose()
-  data['Total'] = temp.count()
+def total(data, add_percent = True, descriptiverows = 23): # There are 23 descriptive rows before individual isolates are listed, other vcf files may vary.
+  temp = data.transpose().replace(0,np.nan) # Ensure all cell not to be counted are empty
+  data['Total'] = temp.count() # counts not empty values so will count 0s
   if add_percent == True:
-    n = len(data)-23 ### There are 23 descriptive rows before individual isolates are listed, other vcf files may vary. ###
+    n = len(data)-descriptiverows
     data['Percent'] = data['Total']/n*100
   return data.transpose()
+
+def hotencoder(col,data): # hot encode categorical data for machine learning.
+  from sklearn.preprocessing import OneHotEncoder
+  encoder = OneHotEncoder()
+  enc = encoder.fit_transform(data[[col]])
+  catlist = encoder.get_feature_names_out()
+  print("Categories encoded:", catlist)
+  df= pd.DataFrame(enc.toarray(), columns=catlist)
+  return df
 
 def rfcaller(data, features=list(), outcome=str(), n_estimators= 500, perc_test = 0.8, accuracy= True, show_features=10):
   from sklearn.ensemble import RandomForestClassifier
@@ -58,27 +56,35 @@ def rfcaller(data, features=list(), outcome=str(), n_estimators= 500, perc_test 
     print(features[0:show_features])
   print("Random Forest Model done as rfc.")
 
-def hotencoder(col,data):
-  from sklearn.preprocessing import OneHotEncoder
-  encoder = OneHotEncoder()
-  enc = encoder.fit_transform(data[[col]])
-  catlist = encoder.get_feature_names_out()
-  print("Categories encoded:", catlist)
-  df= pd.DataFrame(enc.toarray(), columns=catlist)
+def addgenecountcol(df, countsdf, ct):
+  n = list(df.index).index('GeneName') # get index location of GeneName column in original dataframe
+  for colname in countsdf.column.unique():
+    templist = list(countsdf[colname])
+    templist.insert(n,colname)
+    df[ct+colname] = templist
   return df
 
-def addgenecountcol(df, gene):
-  if gene not in df.transpose().GeneName.unique():
-    print("Gene "+gene+" not found in dataframe.")
-    print("Genes found in this dataframe are:", list(df.transpose().GeneName.unique()))
+def mutationsbyisolate(df, counttype=('all','stop')):
+  if counttype = 'all':
+    snpcol = [col for col in df.columns if 'p.' in col] # list of all columns that contain if a mutation is present in isolate (1= present, np.nan= not found).
+    snpcoldf = df[snpcoldf]
+    tdf = snpcoldf.transpose().replace(0,np.nan).groupby('GeneName').count()
+    allcounts = tdf.transpose()
+    addgenecountcol(df, allcounts, ct = counttype)
+  elif counttype = 'stop':
+    # To get which columns correspond to stop mutations as labelled by snpEff.
+    stopcol = [val for val in snpcol if 'fs' in val].extend([val for val in snpcol if '*' in val]) # makes a list subset from snpcol that disreguards mutations that do not cause early stop to protein.
+    stopcoldf = df[stopcol] # USE this to get counts for mutations that disrupt the protein formation by gene in question.
+    tdf = stopcoldf.transpose().replace(0,np.nan).groupby('GeneName').count()
+    stopcounts = tdf.transpose()
+    addgenecountcol(df, stopcounts, ct = counttype)
   else:
-    counts = df.transpose().groupby('GeneName').count().transpose()
-    n = list(df.index).index('GeneName') # get index location of GeneName column in original dataframe
-    genelist = list(counts[gene])
-    genelist.insert(n,gene)
-    return df[gene+"total"] = genelist
+    print("Gene list type must be either 'all' or 'stop'."
 
-# To get which columns correspond to stop mutations as labelled by snpEff
-snpcol = [col for col in df.columns if 'p.' in col]
-stopcol = [val for val in snpcol if 'fs' in val].extend([val for val in snpcol if '*' in val])
-stopcoldf = df[stopcol] # USE this to get counts for mutations that disrupt the protein formation by gene in question.
+def yearsubsetquery(df, colname = 'serotype', colvalue='IV', ncols=-8): # default search for type 'IV' 'serotype' and returns last 8 columns.
+  querydf = df.query(colname+" == '"+colvalue+"'")
+  yeardf = querydf.groupby('year').count
+  colnameloc = list(df.columns).index(colname)
+  finaldf = pd.concat([t4year.iloc[:,colnameloc],t4year.iloc[:,ncols:]], axis=1)
+  return finaldf
+
