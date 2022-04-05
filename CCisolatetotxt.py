@@ -10,13 +10,16 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import seaborn as sns
 
+# Change directory to appropriate location
 os.chdir("/Users/daraki/Documents/py_codes/")
 cwd = os.getcwd()
 #print(cwd)
 from datetime import date
 today = date.today().strftime("%Y%m%d")
+# set seed for consistent reproducibility
 random.seed(1)
 
+# define function to create a color list to be used in the iTOL tree imaging
 def randcolorlist(n,type=1):
     if n < 0 | type < 0:
         raise ValueError('First argument n must be an integer above 0')
@@ -34,9 +37,10 @@ def randcolorlist(n,type=1):
             clist = mpl.cm.gist_rainbow(np.linspace(0, 1, n))
     return clist
 
-
+# Load Multi Locus Sequence Type and Clonal Complex data
 ccdf = pd.read_excel('MLSTandCC.xlsx')
 ccdf = ccdf.rename(columns={"Clonal Complex (6 of 7 matches)":"CC"})
+# Define function to create a subset according to Clonal Complex
 def clonalgroup(cc):
     unique = ccdf['CC'].unique()
     if cc not in unique:
@@ -53,11 +57,13 @@ def clonalgroup(cc):
 #clonalgroup(452)
 #clonalgroup(196)
 
+# Load AntiMicrobial Resistance information
 amr = pd.read_excel('GBSIVoutput.xlsx',sheet_name='AMRall')
 amr = amr.loc[:,('gene','tetM','tet(W/N/W)','tetO','Erm(A)','ErmB','ErmC','ErmT')]
 amr.replace(0,-1,inplace=True)
 amr = amr.rename(columns={"gene":"Isolate"})
 
+# Create headers according to iTOL specifications to be used in the imaging of trees by iTOL website
 header = "DATASET_COLORSTRIP\nSEPARATOR COMMA\nDATASET_LABEL,ABCD\nCOLOR,#ff0000\n\
 SHOW_STRIP_LABELS,1\nSTRIP_LABEL_SIZE_FACTOR,0.5\nSTRIP_LABEL_COLOR,#ffffff\n\
 COLOR_BRANCHES,TRUEFALSE\nSTRIP_LABEL_SHIFT,-11\nSHOW_LABELS,1\SIZE_FACTOR,1\nLEGEND_DATA\n"
@@ -74,6 +80,7 @@ LEGEND_LABELS,_NUMBER_\nFIELD_SHAPES,3,3,3,2,2,2,2\n\
 FIELD_COLORS,_COLOURS_\n\
 FIELD_LABELS,_NUMBER_\nDATA\n"
 
+# Load and combine all meta data gathered so far
 allcdc = pd.read_csv(cwd+'/CDC/allcdc.csv')
 temp1 = allcdc[allcdc['Serotype']=="IV"]
 temp1 = temp1.loc[:,('Run','Year')]
@@ -91,13 +98,14 @@ meta = ccdf.loc[:,('Isolate','ST','CC','Source')]
 meta = pd.merge(meta,combined,how='outer')
 metayeargroup = meta.fillna(0)
 metayeargroup['Year'] = metayeargroup.loc[:,'Year'].astype(int)
+# Create new categorical variable for the year range of the isolate sample
 cat = np.array(['Pre 2000','2000-2005','2006-2010','2011-2015','2016+'])
 metayeargroup.loc[metayeargroup['Year'] >1, 'Yeargroup'] = cat[0]
 metayeargroup.loc[metayeargroup['Year'] >2000, 'Yeargroup'] = cat[1]
 metayeargroup.loc[metayeargroup['Year'] >2010, 'Yeargroup'] = cat[2]
 metayeargroup.loc[metayeargroup['Year'] >2010, 'Yeargroup'] = cat[3]
 metayeargroup.loc[metayeargroup['Year'] >2010, 'Yeargroup'] = cat[4]
-
+# Create new categorical variable for the year range of the isolate sample for groups without any samples prior to 2000.
 meta5year = meta.fillna(0)
 meta5year['Year'] = meta5year.loc[:,'Year'].astype(int)
 cat1 = np.array(['2000-2005','2006-2010','2011-2015','2016+'])
