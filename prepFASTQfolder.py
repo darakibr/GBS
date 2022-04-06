@@ -63,23 +63,3 @@ def prepilluminafiles(fastqfolder):
 	print("================ FINISHED RENAMING FASTQ TO PROPER INPUT NAMES ================")
 
 prepilluminafiles(illumina)
-
-### FOR DOWNLOAD OF FILES FOR JUNO_PROJECT
-listoflinks = pd.read_csv('JunoMetaData.csv').Download_Link
-# Function to automatically get fastqfiles from a DL link
-def getfastq(link):
-	url = str(link)
-	soup = BeautifulSoup(request.urlopen(url),features='html.parser')
-	templist = soup.find_all(href=re.compile('fastq'))
-	isolate = url.split(sep='/')[-1]
-	count = 1
-	for each in templist:
-		download = str(each).split(sep='"')[1]
-		templink = url+'/'+download
-		name = re.sub('JN_US_','','isolate)
-		filename = final_directory+name+"_R"+str(count)+".fastq.gz"
-		request.urlretrieve(templink, filename)
-		count += 1
-for link in linklist:
-	getfastq(link)
-
