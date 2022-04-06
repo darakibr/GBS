@@ -14,10 +14,11 @@ fastqloc = cwd+"fastq/"
 if not os.path.exists(fastqloc):
 	os.makedirs(fastqloc)
 
+	### FOR DOWNLOAD OF FILES FOR JUNO_PROJECT
 meta = pd.read_csv('JunoMetaData.csv')
 linklist = meta.Download_Link
 
-# Downloads fastq.gz files using links
+# Function to automatically get fastqfiles from a DL link
 def getfastq(link):
 	url = str(link)
 	soup = BeautifulSoup(request.urlopen(url),features='html.parser')
@@ -32,7 +33,7 @@ def getfastq(link):
 		request.urlretrieve(templink, filename)
 		count += 1
 
-# CODE to actually Download the files. Do not run unless original DL files lost. #
+# CODE to actually Download the files #
 for link in linklist:
 	getfastq(link)
 
