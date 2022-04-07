@@ -14,10 +14,14 @@ if [ -d "$HOME/gen-soft/samtools" ] ; then
 	PATH="$HOME/gen-soft/samtools:$PATH"
 fi
 
-### CREATE all necessary output folders ###
-folder="NAME_OF_FOLDER"
+### Name all necessary inputs #examples ###
+folder="NAME_OF_FOLDER" #GBS_IV
+bacteria="NAME_OF_SPECIES" #Streptococcus_agalactiae
+stdb="NAME_OF_SEROTYPE_DATABASE" #GBS_serotype.fa
 
-mkdir -p ~/Documents/"$folder"/{corr,seeker,denovo,readqc,SPAdeslog,MLST/out,serotype/out,AMR/{amrtxt,amrjson},metaoutput} &&
+### CREATE all necessary output folders ###
+cd ~/Documents/"$folder"/
+mkdir -p {corr,seeker,denovo,readqc,SPAdeslog,MLST/out,serotype/out,AMR/amrtxt,AMR/amrjson,metaoutput} &&
 
 ### START OF ANALYSIS ###
 for X in LIST_OF_SAMPLES ; do
@@ -47,7 +51,7 @@ for X in LIST_OF_SAMPLES ; do
 		### RENAME contigs ###
 		awk '/^>/{print ">""'"$X"'""_contigs-" ++i; next}{print}' < "$X"_contigs.fasta > "$X"_contigs2.fasta &&
 		
-		### Remove contigs <4K ###
+		### Remove contigs <4, removesmalls.pl program path not set in profile yet ###
 		perl /home/user/gen-soft/removesmalls.pl 1000 "$X"_contigs2.fasta >"$X"_contigs-1K.fasta &&
 		
 		#Raspberry for qc on corrected reads#
@@ -73,18 +77,18 @@ for X in LIST_OF_SAMPLES ; do
 		cp ../"$folder"/fastq/"$X"_R1.fastq.gz ./"$X"_1.fastq.gz &&
 		cp ../"$folder"/fastq/"$X"_R2.fastq.gz ./"$X"_2.fastq.gz &&
 			# srst2 command
-		srst2.py --threads 20 --output "$X" --input_pe "$X"_*.fastq.gz --mlst_db Streptococcus_agalactiae.fasta --mlst_definitions sagalactiae.txt --mlst_delimiter '_' &&
+		srst2.py --threads 20 --output "$X" --input_pe "$X"_*.fastq.gz --mlst_db "$bacteria".fasta --mlst_definitions "$bacteria".txt --mlst_delimiter '_' &&
 			#cleanup
-		mv "$X"__mlst__Streptococcus_agalactiae__results.txt ../"$folder"/MLST/out/"$X"_mlst.txt &&
+		mv "$X"__mlst__"$bacteria"__results.txt ../"$folder"/MLST/out/"$X"_mlst.txt &&
 		rm *.pileup &&
 		rm *.bam &&
 		echo "	*** Done with MLST for $X"
 		
 		### SEROTYPE ###
-		srst2.py --input_pe "$X"_1.fastq.gz "$X"_2.fastq.gz --gene_db GBS_serotype.fa --gene_max_mismatch 10 --min_coverage 98 --min_depth 10 --max_divergence 1 --output "$X" --threads 20 &&
+		srst2.py --input_pe "$X"_1.fastq.gz "$X"_2.fastq.gz --gene_db "$stdb".fa --gene_max_mismatch 10 --min_coverage 98 --min_depth 10 --max_divergence 1 --output "$X" --threads 20 &&
 		#mismatch changed from 1 to 10, depth from 15 to 10, divergence from 0 to 1#
 			#cleanup
-		mv "$X"__fullgenes__GBS_serotype__results.txt ../"$folder"/serotype/out/"$X"_serotype.txt &&
+		mv "$X"__fullgenes__"$stdb"__results.txt ../"$folder"/serotype/out/"$X"_serotype.txt &&
 		rm "$X"__*.bam &&
 		rm "$X"__*.pileup &&
 		rm "$X"__genes*.txt &&
